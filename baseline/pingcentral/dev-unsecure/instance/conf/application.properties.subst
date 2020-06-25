@@ -11,7 +11,7 @@ pingcentral.sso.oidc.client-secret=PingCentral_Secret
 #pingcentral.sso.oidc.role-claim-value-admin=IAM-Admin
 #pingcentral.sso.oidc.role-claim-value-app-owner=Application-Owner
 #pingcentral.sso.oidc.oauth-jwk-set-uri=<JWKS_ENDPOINT_URI>
-pingcentral.sso.oidc.oauth-username-claim-name=Username
+pingcentral.sso.oidc.oauth-username-claim-name=sub
 logging.level.com.pingidentity=${PING_CENTRAL_LOG_LEVEL}
 
 
