@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>PF AuthN API Sample SPA</title>    
+    
+  <!--- Stylesheets --->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/authnspa-default.css" rel="stylesheet">    
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div id="navbar-left" class="">
+        <ul class="nav navbar-nav navbar-left">
+          <li class="active"><a href="/">PF Auth API Sample SPA</a></li>
+        </ul>
+        <ul id="navbar-right" class="nav navbar-nav navbar-right">
+          <!--- Add navigation bar items here as desired --->
+          <li><a href="#destroySession" onClick="destroySession()">Clear Session</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+    
+  <!-- Begin user experience -->
+  <div class="mainContainer">
+
+    <!-- Failed Div - Displayed on a failed state -->
+    <div class="notice" id="failedDiv">
+        <div class="internalFlexBoxClose">
+            <div id="failedState"></div>
+        </div>
+    </div>
+    <!-- End Failed Div -->      
+      
+    <!-- Error Div - Displayed on an error condition -->
+    <div class="errorBanner" id="errorDiv">
+        <div class="internalFlexBoxClose">
+            <div id="errorState"></div>
+        </div>
+    </div>
+    <!-- End Error Div -->
+
+    <!-- Login Form - displayed when the state is USERNAME_PASSWORD_REQUIRED -->
+    <!-- Note: useAlternativeAuthenticationSource is not covered in this SPA -->
+    <div class="loginBox" id="loginDiv">
+     <div>
+      <form>
+        <div>
+          <div class="internalBoxClose">
+            <label for="username">Username</label>
+            <input type="text" class="textItem" name="username" id="username" placeholder="user@example.com"
+              autocomplete="username" required>
+          </div>
+          <div class="internalBoxClose">
+            <label for="password">Password</label>
+            <input type="password" class="textItem" name="password" id="password" placeholder="MyP@ssw0rd!"
+              autocomplete="current-password" required>
+          </div>
+        </div>
+        <div class="internalBoxSpaced">  
+            <a href="#" class="btn btn-default" onclick="javascript:loginPass();">Sign In</a>
+        </div>
+        <div class="internalBoxSpaced">
+          <div>
+            <a href="#" id="resetPassword" onClick="javascript:initiateResetPassword();">Reset your password?</a>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="#" id="accountRecovery" onClick="javascript:initiateAccountRecovery();">Trouble signing in?</a>
+          </div>
+        </div>
+      </form>
+     </div>
+    </div>
+    <!-- End Login Form -->
+
+    <!-- Recommended Password Change Form - displayed when the state is NEW_PASSWORD_RECOMMENDED -->
+    <div class="rPCBox" id="rPCDiv">
+      <form>
+        <div class="internalBoxClose">
+            <div id="passwordExpire"></div>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:initiateResetPassword();">Yes</a>
+          <a href="#" class="btn btn-default" onClick="javascript:continueAuth(rPCDiv);">No</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Recommended Password Change Form -->
+ 
+    <!-- Requested Password Change Form - displayed when the state is NEW_PASSWORD_REQUIRED -->
+    <!-- NOTE: This state occurs when a user requests a password change -->
+    <div class="nPBox" id="newPasswordDiv">
+      <form>
+        <div class="internalBoxSpaced headerText">
+            Password Reset
+        </div>
+        <div>
+            <div class="internalBoxClose rightAlign fixed450">
+              <label for="rc_username">Username:</label>
+              <input type="text" class="textItem" name="rc_usernamefield" id="rc_usernamefield" required>
+            </div>
+            <div class="internalBoxClose rightAlign fixed450">
+              <label for="rc_oldpass">Current Password:</label>
+              <input type="password" class="textItem" name="rc_oldpassfield" id="rc_oldpassfield" required>
+            </div>
+            <div class="internalBoxClose rightAlign fixed450">
+              <label for="rc_newpass">New Password:</label>
+              <input type="password" class="textItem" name="rc_newpassfield" id="rc_newpassfield" required>
+            </div>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:checkNewPassword('rc_usernamefield', 'rc_oldpassfield','rc_newpassfield');">Change Password</a>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:cancelNewPassword(newPasswordDiv);">Cancel</a>
+        </div>      
+      </form>
+    </div>
+    <!-- End Requested Password Change Form -->
+
+    <!-- Must Change Password form - displayed when the state is MUST_CHANGE_PASSWORD -->
+    <!-- NOTE: This state occurs when the user's password has expired -->
+    <div class="mCPBox" id="mCPDiv">
+     <div>
+      <form>
+        <div class="internalBoxSpaced headerText">
+            Your Password Has Expired And Must Be Changed
+        </div>
+        <div class="internalFlexBoxClose centerFlexAlign">
+            <div class="internalBoxClose rightAlign fixed450">
+              <label for="mc_oldpass">Current Password:</label>
+              <input type="password" class="textItem" name="mc_oldpassfield" id="mc_oldpassfield" required>
+            </div>
+            <div class="internalBoxClose rightAlign fixed450">
+              <label for="mc_newpass">New Password:</label>
+              <input type="password" class="textItem" name="mc_newpassfield" id="mc_newpassfield" required>
+            </div>        
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:checkNewPassword('username', 'mc_oldpassfield','mc_newpassfield');">Change Password</a>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:cancelNewPassword(mCPDiv);">Cancel</a>
+        </div>
+      </form>
+     </div>
+    </div>
+    <!-- End Must Change Password Form -->      
+      
+    <!-- Password Change Succeeded Form - displayed when the state is SUCCESSFUL_PASSWORD_CHANGE -->
+    <div class="pCSBox" id="pCSDiv">
+      <form>
+        <div class="internalBoxClose">
+            Your password has been changed successfully!
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:continueAuth(pCSDiv);">Continue</a>
+        </div>
+      </form>
+    </div>    
+    <!-- End Password Change Succeeded Form-->
+      
+    <!-- Check Username Form - displayed when the state is ACCOUNT_RECOVERY_USERNAME_REQUIRED -->
+    <div class="cUBox" id="checkUsernameDiv">
+      <form>
+        <div class="internalBoxSpaced headerText">
+            Account Recovery
+        </div>
+        <div class="internalBoxSpaced">
+          <label for="ar_username">Username:</label>
+          <input type="text" class="textItem" name="ar_usernamefield" id="ar_usernamefield" required>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:aRCheckUsername(checkUsernameDiv);">Recover My Password</a>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:aRForgotUsername();">I Don't Remember My Username</a>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:cancelAccountRecovery(checkUsernameDiv);">Cancel Account Recovery</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Check Username Form -->      
+
+    <!-- Username Recovery - displayed when the state is USERNAME_RECOVERY_EMAIL_REQUIRED -->
+    <div class="uRBox" id="uRDiv">
+      <form>
+        <div class="internalBoxSpaced headerText">
+            Username Recovery
+        </div>
+        <div class="internalBoxSpaced">
+          <label for="ur_email">Email Address:</label>
+          <input type="text" class="textItem" name="ur_emailfield" id="ur_emailfield" required>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:checkRecoveryEmail();">Recover My Username</a>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:cancelUsernameRecovery(uRDiv);">Cancel</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Username Recovery Form -->        
+
+    <!-- Username Recovery Email Sent - displayed when the state is USERNAME_RECOVERY_EMAIL_SENT -->
+    <div class="uRESBox" id="uRESDiv">
+      <form>
+        <div class="internalBoxSpaced">
+            Your username has been sent to the e-mail address provided.
+        </div>
+        <div class="internalBoxSpaced">
+          <a href="#" class="btn btn-default" onClick="javascript:continueAuth(uRESDiv);">Continue</a>
+        </div>
+      </form>
+    </div>    
+    <!-- End Username Recovery Email Sent Form -->     
+      
+    <!-- OTL Sent Form - displayed when the state is ACCOUNT_RECOVERY_OTL_VERIFCATION_REQUIRED -->
+    <div class="oTLSBox" id="oTLSentDiv">
+      <form>
+        <div class="internalBoxSpaced">
+            A one-time link has been sent to the email associated with the provided username.  Please check your email and follow the instructions to recover your account.
+        </div>
+      </form>
+    </div>
+    <!-- End OTL Sent Form -->      
+ 
+    <!-- Password Reset Required form - displayed when the state is PASSWORD_RESET_REQUIRED -->
+    <!-- NOTE: This state occurs when the user needs to reset a password during account recovery -->
+    <div class="pRRBox" id="pRRDiv">
+      <form>
+        <div class="internalBoxSpaced headerText">
+            Account Recovery - Choose A New Password
+        </div>
+        <div class="internalBoxSpaced">
+          <label for="pr_newpass">New Password:</label>
+          <input type="password" class="textItem" name="pr_newpassfield" id="pr_newpassfield" required>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:checkResetPassword();">Set New Password</a>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:cancelAccountRecovery(pRRDiv);">Cancel Account Recovery</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Password Reset Required Form -->          
+
+    <!-- Password Reset Successful form - displayed when the state is SUCCESSFUL_PASSWORD_RESET -->
+    <div class="pRSBox" id="pRSDiv">
+      <form>
+        <div class="internalBoxSpaced">
+            Your Password Has Been Reset Successfully!
+        </div>
+        <div class="internalBoxSpaced">
+          <a href="#" class="btn btn-default" onClick="javascript:successfulPR(pRSDiv);">Continue</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Password Reset Successful Form -->         
+
+    <!-- Check Recovery Code - displayed when the state is RECOVERY_CODE_REQUIRED -->
+    <div class="rCRBox" id="rCRDiv">
+      <form>
+        <div class="internalBoxSpaced">
+            A recovery code has been sent to your e-mail.  Please provide that code here to continue.
+        </div>
+        <div class="internalBoxSpaced">
+          <label for="rc_recoverycode">Recovery Code:</label>
+          <input type="text" class="textItem" name="rc_recoverycodefield" id="rc_recoverycodefield" required>
+        </div>
+        <div class="internalBoxSpaced">
+          <a href="#" class="btn btn-default" onClick="javascript:checkRecoveryCode();">Validate Code</a>
+        </div>
+        <div class="internalBoxSpaced">
+          <a href="#" class="btn btn-default" onClick="javascript:cancelAccountRecovery(rCRDiv);">Cancel Account Recovery</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Check Recovery Code Form -->        
+
+    <!-- Successful Account Unlock - displayed when the state is SUCCESSFUL_ACCOUNT_UNLOCK -->
+    <div class="sAUBox" id="sAUDiv">
+      <form>
+        <div class="internalBoxSpaced">
+            Your account was locked and has been successfully unlocked.
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:continueAuth(sAUDiv);">Continue</a>
+        </div>
+        <div class="internalBoxClose">
+          <a href="#" class="btn btn-default" onClick="javascript:continueAccountRecovery(sAUDiv);">Reset My Password</a>
+        </div>
+      </form>
+    </div>
+    <!-- End Successful Account Unlock Form -->         
+      
+    <!-- Resume Path - displayed when authentication is successful and PF doesn't have additional -->
+    <!-- activities for the user to consider such as a recommended password change -->
+    <!-- This corresponds to the state RESUME -->
+    <div class="collapse" id="resumeUrlDiv">
+        <label for="resumeUrl">Resume URL</label>
+        <a href="#" id="resumeUrl"></a>
+    </div> 
+    <!-- End Resume Path -->  
+      
+      
+  </div>
+  <!-- End user experience -->
+    
+    <!--- Required libraries --->
+    <script src="js/jquery-3.4.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/js.cookie.js"></script>
+        
+    <script>
+        
+        // ***************** Update this with your server info *******************
+        // ex: https://yourserver:9031/pf-ws/authn/flows/
+        var baseUri = "https://sso.gipsondemos.com:9031/pf-ws/authn/flows/";
+        var SPURL = "https://sso.gipsondemos.com:9031/idp/startSSO.ping?PartnerSpId=HTTPBIN";
+        // ***********************************************************************
+
+        var currentFlowState = "";
+        var priorFlowState = "";
+        var lastFlowAction = "";
+        
+        // Clear application session information
+        function destroySession() {
+
+            console.log('Destroying local session cookies');
+
+            Cookies.remove('flowId');
+            //Cookies.remove('priorFlowState');
+
+            console.log('Session cookies cleared');
+
+        } 
+        
+        
+        // Extract a URL Parameter value based on a provided name - based on code by Michael Deller
+        function getUrlParameter(parameterName) {
+
+            let queryParams = window.location.search.substring(1);
+            let splitParams = queryParams.split('&');
+            for (let i = 0; i < splitParams.length; i++) {
+                let thisParameterName = splitParams[i].split('=');
+                if (thisParameterName[0] == parameterName) return thisParameterName[1];
+            }        
+        
+        }
+
+        // exJax function makes an AJAX call - based on code by Michael Deller
+        // ===============================================================================
+
+        function exJax(method, url, callback, contenttype, payload) {
+
+            console.log('Making AJAX call (' + url + ')');
+
+            $.ajax({
+                url: url,
+                method: method,
+                dataType: 'json',
+                contentType: contenttype,
+                data: payload,
+                beforeSend: function(xhr){xhr.setRequestHeader('X-XSRF-Header', 'myvalue');},
+                xhrFields: {
+                    withCredentials: true
+                }
+            })
+            
+                .done(function (data) {
+                    console.log('AJAX call succeeded');
+                    console.log(data);
+                    callback(data);
+                })
+        
+                .fail(function (data) {
+                    switch (data.status) {
+                        case 400:
+                            console.log('AJAX call returned a 400 - a validation error occurred.');
+                            if (typeof data.responseJSON.details != 'undefined'){
+                                if(typeof data.responseJSON.details[0].code != 'undefined'){
+                                    switch (data.responseJSON.details[0].code) {
+                                        case 'CREDENTIAL_VALIDATION_FAILED':
+                                            switch (currentFlowState) {
+                                                case 'USERNAME_PASSWORD_REQUIRED':
+                                                    console.log('AJAX call returned CREDENTIAL_VALIDATION_FAILED, indicating a bad user/pass combination.');
+                                                    $('#errorState').text('Error: Incorrect username/password combination.');
+                                                    $('#errorDiv').css('display', 'flex');
+                                                    break;
+                                                default:
+                                                    console.log('AJAX call failed with an unexpected 400 status code.')
+                                                    break;
+                                            }
+                                            break;
+                                        case 'PASSWORD_CHANGE_ERROR':
+                                            switch (currentFlowState) {
+                                                case 'NEW_PASSWORD_REQUIRED':
+                                                    console.log('AJAX call returned PASSWORD_CHANGE_ERROR, indicating the new password is not valid.');
+                                                    $('#errorState').text('Error: Please ensure your new password meets complexity requirements and is not the same as your old password.');
+                                                    $('#errorDiv').css('display', 'flex');
+                                                    break;
+                                                default:
+                                                    console.log('AJAX call failed with an unexpected 400 status code.');
+                                                    break;
+                                            }
+                                            break;
+                                        case 'ACCOUNT_RECOVERY_ERROR':
+                                            switch (currentFlowState) {
+                                                case 'RECOVERY_CODE_REQUIRED':
+                                                    console.log('AJAX call returned ACCOUNT_RECOVERY_ERROR, indicating the recovery code was incorrect.')
+                                                    $('#errorState').text('Error: Invalid recovery code, please re-enter.');
+                                                    $('#errorDiv').css('display', 'flex');
+                                                    break;
+                                                case 'PASSWORD_RESET_REQUIRED':
+                                                    console.log('AJAX call returned ACCOUNT_RECOVERY_ERROR, indicating the new password was not valid.')
+                                                    $('#errorState').text('Error: Please ensure your new password meets complexity requirements and is not the same as your old password.')
+                                                    $('#errorDiv').css('display', 'flex');
+                                                default:
+                                                    console.log('AJAX call failed with an unexpected 400 error code.')
+                                                    break;
+                                            }
+                                        default:
+                                            console.log('AJAX call failed with an unexpected 400 status code.')
+                                            break;
+                                    }
+                                }
+                            }
+                            break;
+                        case 404:
+                            console.log('AJAX call returned a 404 - did you pass a valid flowId?');
+                            break;
+                        case 500:
+                            console.log('AJAX call returned a 500 - please review the PF server configuration.');
+                            break;
+                        default:
+                            console.log('AJAX call failed with an unexpected error.');
+                            break;
+                    }
+                    console.log(data);
+                });
+        }
+        
+        // Login with user and password
+        // ===============================================================================
+        function loginPass() {
+            console.log('User login: posting credentials');
+            // Required parameters: username, password
+            // Optional parameters: rememberMyUsername, thisIsMyDevice, captchaResponse
+            // See documentation for use of optional parameters
+            let payload = JSON.stringify({ username: $('#username').val(), password: $('#password').val() });
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'checkUsernamePassword';
+            
+            // This content type corresponds to a username and validation call
+            let contenttype = 'application/vnd.pingidentity.checkUsernamePassword+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }
+
+        // Indicate to PF that we want to reset the password
+        // ===============================================================================
+        function initiateResetPassword() {
+            console.log('User has requested to begin the password reset process.');
+            // Required parameters: **NONE**
+            // Optional parameters: **NONE**
+            let payload = "";
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'initiatePasswordChange';
+            
+            //This content type corresponds to a password reset call
+            let contenttype = 'application/vnd.pingidentity.initiatePasswordChange+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }
+
+        // Indicate to PF that we want to recover the account
+        // ===============================================================================
+        function initiateAccountRecovery() {
+            console.log('User has requested the account recovery process');
+            //Required parameters: **NONE**
+            //Optional parameters: **NONE**
+            let payload = "";
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'initiateAccountRecovery';
+            
+            //This content type corresponds to a username recovery call
+            let contenttype = 'application/vnd.pingidentity.initiateAccountRecovery+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }       
+        
+        // Indicate to PF that we are ready to continue AuthN flow
+        // ===============================================================================
+        function continueAuth(divToHide) {
+            console.log('User has requested continuation of the AuthN flow');
+            //Required parameters: **NONE**
+            //Optional parameters: **NONE**
+            let payload = "";
+            
+            //Hide the form that initiated AuthN continuation
+            $(divToHide).css('display', 'none');
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'continueAuthentication';
+            
+            //This content type corresponds to an authentication flow continuation
+            let contenttype = 'application/vnd.pingidentity.continueAuthentication+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }        
+        
+        // Check new password for password change
+        // ===============================================================================
+        function checkNewPassword(username, oldpass, newpass) {
+            console.log('User changing password: attempting password change with PF');
+            // Required parameters: username, existingPassword, newPassword
+            // Optional parameters: captchaResponse
+            // See documentation for use of optional parameters
+            let payload = JSON.stringify({ username: $('#' + username).val(), existingPassword: $('#' + oldpass).val(), newPassword: $('#' + newpass).val() });
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'checkNewPassword';
+            
+            // This content type corresponds to a password change flow
+            let contenttype = 'application/vnd.pingidentity.checkNewPassword+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }        
+              
+        // Cancel password change
+        // ===============================================================================
+        function cancelNewPassword(divToHide) {
+            console.log('User has cancelled password change');
+            // Required parameters: **NONE**
+            // Optional parameters: **NONE**
+            let payload = "";
+            
+            //Hide the div from which the password change was cancelled
+            $(divToHide).css('display', 'none');
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'cancelPasswordChange';
+            
+            // This content type corresponds to cancelling a password change
+            let contenttype = 'application/vnd.pingidentity.cancelPasswordChange+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }           
+
+        // Cancel username recovery
+        // ===============================================================================
+        function cancelUsernameRecovery(divToHide) {
+            console.log('User has cancelled username recovery');
+            // Required parameters: **NONE**
+            // Optional parameters: **NONE**
+            let payload = "";
+            
+            //Hide the div from which the password change was cancelled
+            $(divToHide).css('display', 'none');
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'cancelUsernameRecovery';
+            
+            // This content type corresponds to cancelling a password change
+            let contenttype = 'application/vnd.pingidentity.cancelUsernameRecovery+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }         
+        
+        // Check username for account recovery
+        // ===============================================================================
+        function aRCheckUsername(divToHide) {
+            console.log('Account recovery: checking username');
+            // Required parameters: username
+            // Optional parameters: captchaResponse
+            // See documentation for use of optional parameters
+            let payload = JSON.stringify({ username: $('#ar_usernamefield').val() });
+
+            //Hide the div from which the function was called
+            $(divToHide).css('display', 'none');
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'checkAccountRecoveryUsername';
+            
+            // This content type corresponds to checking a username for account recovery
+            let contenttype = 'application/vnd.pingidentity.checkAccountRecoveryUsername+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }       
+      
+        // Check reset password for account recovery
+        // ===============================================================================
+        function checkResetPassword() {
+            console.log('Account recovery: Password Reset Required');
+            // Required parameters: newPassword
+            // Optional parameters: **NONE**
+            let payload = JSON.stringify({ newPassword: $('#pr_newpassfield').val() });
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'checkPasswordReset';
+            
+            // This content type corresponds to a password reset for account recovery flow
+            let contenttype = 'application/vnd.pingidentity.checkPasswordReset+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }  
+        
+        // Check recovery code
+        // ===============================================================================
+        function checkRecoveryCode() {
+            console.log('Account recovery: recovery code sent');
+            // Required parameters: recoveryCode
+            // Optional parameters: **NONE**
+            let payload = JSON.stringify({ recoveryCode: $('#rc_recoverycodefield').val() });
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'checkRecoveryCode';
+            
+            // This content type corresponds to a recovery code check flow
+            let contenttype = 'application/vnd.pingidentity.checkRecoveryCode+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }  
+
+        // Request username recovery
+        // ===============================================================================
+        function aRForgotUsername() {
+            console.log('Account recovery: User has requested username recovery');
+            // Required parameters: **NONE**
+            // Optional parameters: **NONE**
+            // See documentation for use of optional parameters
+            let payload = "";
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'recoverUsername';
+            
+            // This content type corresponds to requesting username recovery
+            let contenttype = 'application/vnd.pingidentity.recoverUsername+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }             
+
+        // Check recovery email address
+        // ===============================================================================
+        function checkRecoveryEmail() {
+            console.log('Username recovery: check email address');
+            // Required parameters: email
+            // Optional parameters: **NONE**
+            let payload = JSON.stringify({ email: $('#ur_emailfield').val() });
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'checkUsernameRecoveryEmail';
+            
+            // This content type corresponds to checking email during username recovery
+            let contenttype = 'application/vnd.pingidentity.checkUsernameRecoveryEmail+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }                  
+ 
+        // Cancel account recovery
+        // ===============================================================================
+        function cancelAccountRecovery(divToHide) {
+            console.log('User cancelled current step');
+            // Required parameters: **NONE**
+            // Optional parameters: **NONE**
+            let payload = "";
+            
+            $(divToHide).css('display', 'none');
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'cancelAccountRecovery';
+            
+            // This content type corresponds to cancelling the account recovery flow
+            let contenttype = 'application/vnd.pingidentity.cancelAccountRecovery+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }            
+
+        // Cancel account recovery
+        // ===============================================================================
+        function continueAccountRecovery(divToHide) {
+            console.log('User requested account recovery');
+            // Required parameters: **NONE**
+            // Optional parameters: **NONE**
+            let payload = "";
+            
+            $(divToHide).css('display', 'none');
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'continueAccountRecovery';
+            
+            // This content type corresponds to account recovery from an account unlock
+            let contenttype = 'application/vnd.pingidentity.continueAccountRecovery+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }           
+        
+        // Continue AuthN from successful password reset
+        // ===============================================================================
+        function successfulPR(divToHide) {
+            console.log('Account recovery: Password Reset Successful');
+            // Required parameters: **NONE**
+            // Optional parameters: **NONE**
+            let payload = "";
+            
+            //Hide the successful password change Div
+            $(divToHide).css('display', 'none');
+            
+            let flowUrl = baseUri + Cookies.get("flowId");
+            
+            lastFlowAction = 'continueAuthentication';
+            
+            // This content type corresponds to continuing an AuthN flow after password reset
+            let contenttype = 'application/vnd.pingidentity.continueAuthentication+json';
+            exJax('POST', flowUrl, checkNextStep, contenttype, payload, true);
+        }  
+        
+        // Determines next step in the flow process - based on code by Michael Deller
+        //============================================================================
+        function checkNextStep(data) {
+            
+            currentStatus = data.status;
+            console.log('Parsed JSON returned next step: ' + currentStatus);
+            
+            $('#errorDiv').css('display', 'none');
+            
+            priorFlowState = currentFlowState;
+            currentFlowState = currentStatus;
+            
+            //In the event of a FAILED flow state, we need to carry the previous flow state forward to
+            //be able to present a meaningful error.  A FAILED state may be achieved in a number of ways
+            //including a resume URL redirect.  We need the cookie to persist data across the page reload
+            //in that scenario.
+            if (priorFlowState !== "") {
+                Cookies.set('priorFlowState', priorFlowState);
+            }
+            
+            switch (currentStatus) {
+                case 'USERNAME_PASSWORD_REQUIRED':
+                    console.log('Dipslay login form');
+                    $('#loginDiv').css('display', 'flex');
+                    break;
+                case 'CHALLENGE_RESPONSE_REQUIRED':
+                    console.log('PF has requested a challenge response - this SPA is not configured to support challenge responses.');
+                    break;
+                case 'NEW_PASSWORD_RECOMMENDED':
+                    console.log('Password will expire soon - notifying user.')
+                    $('#loginDiv').css('display', 'none');
+                    if(data.daysToExpire > 0) {
+                        $('#passwordExpire').text('Your password will expire in ' + data.daysToExpire + ' day(s).  Would you like to change it now?');
+                    } else {
+                        $('#passwordExpire').text('Your password will expire today, would you like to change it now?');
+                    }
+                    $('#rPCDiv').css('display', 'flex');
+                    break;
+                case 'NEW_PASSWORD_REQUIRED':
+                    $('#loginDiv').css('display', 'none');
+                    $('#rPCDiv').css('display', 'none');
+                    $('#newPasswordDiv').css('display', 'flex');
+                    break;
+                case 'MUST_CHANGE_PASSWORD':
+                    $('#loginDiv').css('display', 'none');
+                    $('#mCPDiv').css('display', 'flex');
+                    break;
+                case 'SUCCESSFUL_PASSWORD_CHANGE':
+                    $('#newPasswordDiv').css('display', 'none');
+                    $('#mCPDiv').css('display', 'none');
+                    $('#pCSDiv').css('display', 'flex');
+                    break;
+                case 'ACCOUNT_RECOVERY_USERNAME_REQUIRED':
+                    $('#loginDiv').css('display', 'none');
+                    $('#checkUsernameDiv').css('display', 'flex');
+                    break;
+                case 'ACCOUNT_RECOVERY_OTL_VERIFICATION_REQUIRED':
+                    $('#checkUsernameDiv').css('display','none');
+                    $('#oTLSentDiv').css('display', 'flex');
+                    break;
+                case 'PASSWORD_RESET_REQUIRED':
+                    $('#rCRDiv').css('display', 'none');
+                    $('#pRRDiv').css('display', 'flex');
+                    break;
+                case 'SUCCESSFUL_PASSWORD_RESET':
+                    $('#pRRDiv').css('display', 'none');
+                    $('#pRSDiv').css('display', 'flex');
+                    break;
+                case 'USERNAME_RECOVERY_EMAIL_REQUIRED':
+                    $('#checkUsernameDiv').css('display', 'none');
+                    $('#uRDiv').css('display', 'flex');
+                    break;
+                case 'USERNAME_RECOVERY_EMAIL_SENT':
+                    $('#uRDiv').css('display', 'none');
+                    $('#uRESDiv').css('display', 'flex');
+                    break;
+                case 'RECOVERY_CODE_REQUIRED':
+                    $('#checkUsernameDiv').css('display', 'none');
+                    $('#rCRDiv').css('display', 'flex');
+                    break;
+                case 'SUCCESSFUL_ACCOUNT_UNLOCK':
+                    $('#pCSDiv').css('display', 'none');
+                    $('#pRRDiv').css('display', 'none');
+                    $('#pRSDiv').css('display', 'none');
+                    $('#rCRDiv').css('display', 'none');
+                    $('#sAUDiv').css('display', 'flex');
+                    break;
+                case 'RESUME':
+                    console.log('Resume path provided: ' + data.resumeUrl);
+                    $('#resumeUrl').text(data.resumeUrl);
+                    $('#resumeUrl').attr('href', data.resumeUrl);
+                    $('#resumeUrlDiv').show();
+                    break;
+                case 'FAILED':
+                    switch (Cookies.get('priorFlowState')) {
+                        case 'USERNAME_PASSWORD_REQUIRED':
+                            //Locked out at PF
+                            console.log('Error: PF retry attempts exceeded');
+                            $('#failedState').text('The number of login attempts has been exceeded.');
+                            $('#failedDiv').css('display', 'flex');
+                            break;
+                        case 'ACCOUNT_RECOVERY_USERNAME_REQUIRED':
+                            //The username doesn't exist
+                            console.log('Error: Username doesn\'t exist');
+                            $('#failedState').text('The provided username is not eligible for account recovery.');
+                            $('#failedDiv').css('display', 'flex');
+                            break;
+                        case 'USERNAME_RECOVERY_EMAIL_REQUIRED':
+                            //The email address isn't associated with an account
+                            console.log('Error: Email address not associated with an account');
+                            $('#failedState').text('The provieded email address is not eligible for account recovery.');
+                            $('#failedDiv').css('display', 'flex');
+                            break;
+                        default:
+                            console.log('Error: FAILED state due to unknown cause.')
+                            break;
+                    }
+                    break;
+                default:
+                    console.log('Unexpected status: ' + currentStatus);
+                    break;
+            }
+                    
+        }
+        
+        //Ensure the page is loaded before we start processing    
+        $(document).ready(function () {
+            
+        //Get flowId from URL, if it was passed    
+        var flowId = getUrlParameter("flowId");
+
+            //Do we have an existing flowId in the session?
+            if(Cookies.get("flowId")) {
+                
+                console.log('flowId cookie found')
+
+                //Did we get a flowId passed in the URL?
+                if (flowId) {
+                    
+                    //Check if the URL flowID and session cookie flowID match
+                    if(flowId == Cookies.get("flowId")) {
+                        
+                        //Odd scenario - cookie already set with URL flowId
+                        console.log('Odd scenario - session flowId already set with URL flow ID.  Did user hit back button on browser?');
+                        
+                    } else {
+                        
+                        //Alert the user to the discrepancy, destroy the session cookies, and start fresh
+                        console.log('New URL flowId does not match existing session flowId.');
+                        destroySession();
+                        Cookies.set("flowId", flowId);
+
+                    }
+                    
+                    //Check next step
+                    let flowUrl = baseUri + flowId;
+                    exJax('GET', flowUrl, checkNextStep, 'application/json');
+                                                                
+                } else {
+                    
+                    //Alert user that application was called without flowId
+                    console.log('Odd scenario - application called without flowID - resuming application using existing session flowId.');
+
+                    //Check next step
+                    let flowUrl = baseUri + Cookies.get("flowId");
+                    exJax('GET', flowUrl, checkNextStep, 'application/json');
+                    
+                }
+
+            } else {
+                
+                console.log('no flowId cookie.')
+                
+                if (flowId) {
+                    
+                    //flowId passed in URL - set session cookie
+                    console.log('Using new URL flowId');
+                    Cookies.set("flowId", flowId);
+                    
+                    //Determine next step
+                    let flowUrl = baseUri + flowId;
+                    exJax('GET', flowUrl, checkNextStep, 'application/json');
+                    
+                } else {
+                    
+                    //We have no flowId in session or in URL - report error to user
+                    window.location.href = SPURL;
+                    console.log("Authentication application called without context - cannot proceed.");
+                }
+
+
+            }
+
+
+        })
+    
+    </script>    
+
+</body>
+    
+</html>
