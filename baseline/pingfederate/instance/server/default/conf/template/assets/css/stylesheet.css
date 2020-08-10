@@ -1,0 +1,115 @@
+.container-fluid {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.container-loc {
+  position: top;
+  font-family: Arial;
+}
+
+.text-block {
+  position: absolute;
+  bottom: 1px;
+  right: 200px;
+  background-color: black;
+  color: yellow;
+  padding-left: 250px;
+  padding-right: 250px;
+   padding-top: 75px;
+   padding-bottom: 75px;
+}
+
+
+.pwdguide{
+background-color:white;
+}
+
+.txt{
+font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+color:white;
+
+}
+
+body {
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+background-image: url("../images/honeycombbackground.jpg");
+background-color: '#022c70';
+}
+
+.tblstyle {
+border-collapse: collapse,
+border: 1px solid black;
+}
+
+td {
+padding: 8px;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+
+.testimonials {
+  padding-top: 7rem;
+  padding-bottom: 7rem;
+}
+footer.footer {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.navbar .navbar-nav .nav-link {
+  color: yellow;
+  border-radius: 0.25rem;
+  margin: 0 0.25em;
+}
+.navbar .navbar-collapse,
+.navbar .navbar-form {
+  border-color: #ffffff;
+}
+.hideElement{
+display: none;
+}
+
+
+
+.sidenav {
+  height: 100%;
+  width: 160px;
+  position: fixed;
+  z-index: 1;
+  top: 58px;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 10px 9px 9px 30px;
+  text-decoration: none;
+  font-size: 17px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+
+
+
+
+
+
