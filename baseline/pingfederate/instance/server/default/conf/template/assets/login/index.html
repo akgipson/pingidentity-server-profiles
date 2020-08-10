@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <!-- local css -->
+  <link href="../css/stylesheet.css" rel="stylesheet" />
+
+  <!-- Custom fonts for this template -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet"
+    type="text/css" />
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+</head>
+
+<body>
+
+  <!-- page container -->
+  <div class="container-fluid">
+
+    <!-- navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<img src=../images/logo.png>  &nbsp;&nbsp;&nbsp;&nbsp;
+      <a class="navbar-brand" href="../">Home</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+
+      <div class="collapse navbar-collapse text-uppercase" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link d-none btn btn-primary" id="signOnButton"
+              onclick="doLogin();">Login</a></li>
+          &nbsp;&nbsp;
+          <li class="nav-item">
+            <a class="nav-link d-none btn btn-primary" id="logoutButton" href="/logout/">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- /navigation -->
+
+    <section class="testimonials">
+
+      <!-- login div -->
+      <div class="container collapse" id="loginDiv">
+        <h3 class="txt">Sign In</h3>
+
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <input type="email" class="form-control" name="username" id="username" placeholder="Email Address"
+                autocomplete="username" autofocus />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <input type="password" class="form-control" name="password" id="password" placeholder="Password"
+                autocomplete="current-password" required />
+            </div>
+            <div class="form-group collapse">
+              <input type="text" class="form-control" name="validatePasswordUrl" id="validatePasswordUrl" readonly />
+            </div>
+          </div>
+          <div class="mt-5" id="signOnPayload">
+            <a href="#" class="btn btn-primary btn-lg mb-2" onclick="javascript:validatePassword();">Sign In</a>
+          </div>
+
+          <div class="mt-5" id="signOnPayload">
+          <a href="#" onclick="showPasswordForgot();" class="btn btn-secondary btn-lg mb-2 mr-1">Forgot Password</a>
+          <a href="../registration.php" class="btn btn-secondary btn-lg mb-2 mr-1">Register</a>
+        </div>
+            <div class="mt-5" id="selfServicePayload"></div>
+        </form>
+      </div>
+      <!-- /login div -->
+
+      <!-- identifier div -->
+      <div class="container collapse" id="identifierDiv">
+        <h2 class="mb-5">Sign In</h2>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <input type="email" class="form-control" name="identifier" id="identifier" placeholder="Email Address"
+                autocomplete="identifier" autofocus />
+            </div>
+          </div>
+          <div class="form-row collapse">
+            <div class="form-group col-md-6"> <input type="text" class="form-control" name="validateIdentifierUrl"
+                id="validateIdentifierUrl" readonly />
+            </div>
+          </div>
+          <a href="#" class="mt-5 btn btn-primary btn-lg" onclick="javascript:validateIdentifier();">Sign In</a>
+        </form>
+      </div>
+      <!-- /identifier div -->
+
+      <!-- device select div -->
+      <div class="container collapse" id="deviceSelectDiv">
+        <h2 class="mb-5 txt">Select Device</h2>
+        <div class="form-row">
+          <div class="col-md-6" id="devicePayloadDiv"></div>
+          <div class="collapse">
+            <input type="text" class="form-control" name="deviceSelectUrl" id="deviceSelectUrl" readonly />
+          </div>
+        </div>
+      </div>
+      <!-- /device select div -->
+
+
+ 	<!-- progressive profile select div -->
+
+
+        <div class="container collapse" id="progressiveProfileDiv">
+         <h2 class="mb-5 txt">Additional Information Requested</h2>
+         <div class="txt" id=progressiveProfileTextDiv></div>
+      <br>
+           <form id=frmProgressiveProfile>
+             <div id="progressiveProfileFieldsDiv"></div>
+               <a href="#" class="mt-5 btn btn-primary btn-lg" onclick="javascript:submitProgressiveProfile();">Submit</a>
+              <div class="form-row collapse">
+            <div class="form-group col-md-6"> 
+	   </form>
+	<form>
+        <input type="text" class="form-control" name="progProfileIdentifierUrl"
+                id="progProfileIdentifierUrl" readonly /> 
+              </div>
+          </div>
+         </form>
+        </div>
+
+
+      <!-- /progressive profile select  div -->
+
+
+
+      <!-- otp div -->
+      <div class="container collapse" id="otpDiv">
+        <h4 class="txt">Multifactor Authentication</h4>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <input type="text" class="form-control" name="otp" id="otp" placeholder="One Time Passcode" autofocus
+                required />
+            </div>
+            <div class="form-group col-md-12 collapse">
+              <input type="text" class="form-control" name="validateOtpUrl" id="validateOtpUrl" readonly />
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary btn-lg mt-5" onclick="javascript:validateOtp();">Sign In</a>
+        </form>
+      </div>
+      <!-- /otp div -->
+
+      <!-- device push div -->
+<br>
+      <div class="container collapse" id="devicePushDiv">
+        <div class="row">
+          <div class="col-md-8">
+            <h2 class="mb-4 txt">Authenticating</h2>
+          </div>
+        </div>
+        <div class="row mt-5 mb-5">
+          <div class="spinner-grow text-success" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-success" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-success" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8">
+            <p class="lead" id="devicePushMessage">&nbsp;</p>
+          </div>
+        </div>
+      </div>
+      <!-- /device push div -->
+
+      <!-- account registration div -->
+      <div class="container collapse" id="accountRegDiv">
+        <h3 class="txt">Create Your Account</h3>
+        <div class="row">
+          <div class="col">
+            <form>
+              <div class="form-row">
+                <div class="form-group col-md-9">
+                  <input type="email" class="form-control" name="accountRegUsername" id="accountRegUsername"
+                    placeholder="Email Address" autofocus />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-9">
+                  <input type="password" class="form-control" name="accountRegPassword" id="accountRegPassword"
+                    placeholder="Password" />
+                </div>
+
+
+
+
+		<div class="form-group col-md-9">
+                  <input type="password" class="form-control" name="confirmAccountRegPassword" id="confirmAccountRegPassword"
+                    placeholder="Confirm Password" />
+                </div>
+
+
+
+
+
+              </div>
+              <div class="form-group collapse">
+                <input type="text" class="form-control" name="accountRegUrl" id="accountRegUrl" readonly />
+              </div>
+              <div class="mt-5" id="signOnPayload">
+                <a href="#" class="btn btn-secondary btn-lg mb-2" onclick="javascript:registerAccount();">Create
+                  Account</a>
+              </div>
+              <div class="mt-5" id="selfServicePayload"></div>
+            </form>
+          </div>
+          <div class="col">
+            <ul class=pwdguide>
+              <li id="length" class="text-primary">The password must be at least 8 characters in length</li>
+              <li id="uppercase" class="text-primary">The password must have one or more upper case letters</li>
+              <li id="lowercase" class="text-primary">The password must have one or more lower case letters</li>
+              <li id="numeric" class="text-primary">The password must have one or more number</li>
+              <li id="special" class="text-primary">The password must have one or more special characters</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- /account registration div -->
+
+      <!-- user verification div for new registrations -->
+      <div class="container collapse txt" id="userVerifyDiv">
+        <h2 class="mb-5">Thank You!</h2>
+        <p class="lead mb-5">We've sent a verification email to your email address. Please verify your email to finish
+          setting up your Boston Scientific account.</p>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <input type="text" class="form-control" name="verificationCode" id="verificationCode"
+                placeholder="Verification Code" autofocus required />
+            </div>
+            <div class="form-group col-md-12 collapse">
+              <input type="text" class="form-control" name="userVerifyUrl" id="userVerifyUrl" readonly />
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary btn-lg mt-5" onclick="javascript:userVerify();">Verify</a>
+        </form>
+      </div>
+      <!-- /user verification div -->
+
+      <!-- account recovery div for forgotten passwords -->
+      <div class="container collapse" id="passwordRecoverDiv">
+        <h2 class="mb-5 txt">Enter New Password</h2>
+        <p class="lead txt">If you have an active account with a valid email address, you will receive an email with a
+          recovery code which you may enter here, along with a new password. If you do not have an account or email,
+          please contact your administrator to recover your password.</p>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <input type="text" class="form-control" name="passwordRecoverCode" id="passwordRecoverCode"
+                placeholder="Recovery Code" autofocus required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <input type="password" class="form-control" name="passwordRecoverNewPassword"
+                id="passwordRecoverNewPassword" placeholder="New Password" required />
+            </div>
+          </div>
+          <div class="form-group col-md-12 collapse">
+            <input type="text" class="form-control" name="passwordRecoverUrl" id="passwordRecoverUrl" readonly />
+          </div>
+          <a href="#" class="btn btn-primary btn-lg mt-5" onclick="javascript:passwordRecover();">Save</a>
+        </form>
+      </div>
+      <!-- /account verification div -->
+
+      <!-- change password div -->
+      <div class="container collapse" id="passwordDiv">
+        <h2 class="mb-5">New Password</h2>
+        <div class="row">
+          <div class="col">
+            <form>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <input type="password" class="form-control" name="newPassword" id="newPassword"
+                    placeholder="New Password" autofocus required />
+                </div>
+                <div class="form-group col-md-12 collapse">
+                  <input type="text" class="form-control" name="changePasswordUrl" id="changePasswordUrl" readonly />
+                </div>
+              </div>
+              <a href="#" class="btn btn-primary btn-lg mt-5" onclick="javascript:changePassword();">Change Password</a>
+            </form>
+          </div>
+          <div class="col">
+            <ul>
+              <li id="length" class="text-primary">The password must be at least 8 characters in length</li>
+              <li id="uppercase" class="text-primary">The password must have one or more upper case letters</li>
+              <li id="lowercase" class="text-primary">The password must have one or more lower case letters</li>
+              <li id="numeric" class="text-primary">The password must have one or more number</li>
+              <li id="special" class="text-primary">The password must have one or more special characters</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- /change password div -->
+
+      <!-- forgot password div -->
+      <div class="container collapse" id="passwordForgotDiv">
+        <h4 class="txt">Account Recovery</h4>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-5">
+              <input type="email" class="form-control" name="passwordForgotUsername" id="passwordForgotUsername"
+                placeholder="Email Address" autocomplete="username" autofocus />
+            </div>
+          </div>
+          <div class="form-group collapse">
+            <input type="text" class="form-control" name="passwordForgotUrl" id="passwordForgotUrl" readonly />
+          </div>
+          <div class="mt-5" id="signOnPayload">
+            <a href="#" class="btn btn-primary btn-lg mb-2" onclick="javascript:passwordForgot();">Submit</a>
+          </div>
+        </form>
+      </div>
+      <!-- /forgot password div -->
+
+      <!-- account linking div -->
+      <div class="container collapse" id="accountLinkDiv">
+        <h2 class="mb-5">Create Your Profile</h2>
+        <p class="lead mb-5">Please confirm your email address</p>
+        <form>
+          <div class="form-row">
+            <div class="form-group col-md-5">
+              <input type="email" class="form-control" name="accountLinkUsername" id="accountLinkUsername"
+                placeholder="Email Address" autocomplete="username" autofocus />
+            </div>
+          </div>
+          <div class="form-group collapse">
+            <input type="text" class="form-control" name="accountLinkUrl" id="accountLinkUrl" readonly />
+          </div>
+          <div class="mt-5" id="signOnPayload">
+            <a href="#" class="btn btn-primary btn-lg mb-2" onclick="javascript:accountLink();">Sign In</a>
+          </div>
+          <div class="mt-5" id="selfServicePayload"></div>
+        </form>
+      </div>
+      <!-- /account linking div -->
+
+      <!-- warning div -->
+      <div class="container collapse" id="warningDiv">
+        <div class="row">
+          <div class="col-md-8">
+            <h2 class="mb-4" id="warningTitle"></h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="txt">
+            <p class="lead" id="warningMessage"></p>
+          </div>
+        </div>
+      </div>
+      <!-- /warning div -->
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 h-30 text-center text-lg-left my-auto">
+            <p class="text-muted small mb-4 mb-lg-0">&copy; Ping Identity 2020. All Rights Reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- /Footer -->
+
+  </div>
+  <!-- /page container -->
+
+  <!-- jquery and bootstrap js libraries -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+  <!-- JavaScript Cookie plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+  <!-- local javascript functions -->
+  <script src="../js/auth.js"></script>
+
+  <script>
+
+    // some housekeeping variables
+
+    const flowId = getUrlParameter('flowId');
+
+    // interactive password change feedback
+
+    const regexLower = new RegExp('(?=.*[a-z])');
+    const regexUpper = new RegExp('(?=.*[A-Z])');
+    const regexNumeric = new RegExp('(?=.*[0-9])');
+    const regexSpecial = new RegExp('(?=.*[~!@#\$%\^&\*\)\(\|\;\:\,\.\?\_\-])');
+    const regexLength = new RegExp('(?=.{8,})');
+
+    $('#newPassword').on('input', function (e) {
+      let thisPassword = $('#newPassword').val();
+
+      if (regexLower.test(thisPassword)) {
+        $('#lowercase').removeClass('text-primary');
+      } else {
+        $('#lowercase').addClass('text-primary');
+      }
+
+      if (regexUpper.test(thisPassword)) {
+        $('#uppercase').removeClass('text-primary');
+      } else {
+        $('#uppercase').addClass('text-primary');
+      }
+
+      if (regexNumeric.test(thisPassword)) {
+        $('#numeric').removeClass('text-primary');
+      } else {
+        $('#numeric').addClass('text-primary');
+      }
+
+      if (regexSpecial.test(thisPassword)) {
+        $('#special').removeClass('text-primary');
+      } else {
+        $('#special').addClass('text-primary');
+      }
+
+      if (regexLength.test(thisPassword)) {
+        $('#length').removeClass('text-primary');
+      } else {
+        $('#length').addClass('text-primary');
+      }
+    });
+
+    $('#accountRegPassword').on('input', function (e) {
+      let thisPassword = $('#accountRegPassword').val();
+
+      if (regexLower.test(thisPassword)) {
+        $('#lowercase').removeClass('text-primary');
+      } else {
+        $('#lowercase').addClass('text-primary');
+      }
+
+      if (regexUpper.test(thisPassword)) {
+        $('#uppercase').removeClass('text-primary');
+      } else {
+        $('#uppercase').addClass('text-primary');
+      }
+
+      if (regexNumeric.test(thisPassword)) {
+        $('#numeric').removeClass('text-primary');
+      } else {
+        $('#numeric').addClass('text-primary');
+      }
+
+      if (regexSpecial.test(thisPassword)) {
+        $('#special').removeClass('text-primary');
+      } else {
+        $('#special').addClass('text-primary');
+      }
+
+      if (regexLength.test(thisPassword)) {
+        $('#length').removeClass('text-primary');
+      } else {
+        $('#length').addClass('text-primary');
+      }
+    });
+
+    // getUrlParameter function parses out the querystring to fetch specific value (e.g., flowId)
+
+    function getUrlParameter(parameterName) {
+      let pageUrl = window.location.search.substring(1);
+      let urlVariables = pageUrl.split('&');
+      for (let i = 0; i < urlVariables.length; i++) {
+        let thisParameterName = urlVariables[i].split('=');
+        if (thisParameterName[0] == parameterName) return thisParameterName[1];
+      }
+    }
+
+    // exJax function makes an AJAX call
+
+    function exJax(method, url, callback, contenttype, payload) {
+      console.log('ajax (' + url + ')');
+      $.ajax({
+        url: url,
+        method: method,
+        dataType: 'json',
+        beforeSend: function(xhr){xhr.setRequestHeader('X-XSRF-Header', 'myvalue');},
+        contentType: contenttype,
+        
+
+        data: payload,
+        xhrFields: {
+          withCredentials: true
+        }
+      })
+        .done(function (data) {
+          callback(data);
+        })
+        .fail(function (data) {
+          console.log('ajax call failed');
+          console.log(data);
+          $('#warningMessage').text(data.responseJSON.details[0].message);
+          $('#warningDiv').show();
+        });
+    }
+
+    // change password function
+
+    function changePassword() {
+      console.log('changePassword called');
+      let payload = JSON.stringify({ currentPassword: $('#password').val(), newPassword: $('#newPassword').val() });
+      let url = $('#changePasswordUrl').val();
+      let contenttype = 'application/vnd.pingidentity.password.reset+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    // device selector button event
+
+    function deviceSelect(objButton) {
+      console.log('deviceSelect called');
+      $('#deviceSelectDiv').hide();
+      $('#devicePushDiv').show();
+      let payload = JSON.stringify({ device: { id: objButton.value } });
+      let url = $('#deviceSelectUrl').val();
+      let contenttype = 'application/vnd.pingidentity.device.select+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    // get push status
+
+    function getPushStatus(url) {
+      console.log('getPushStatus called');
+      setTimeout(function () {
+        exJax('GET', url, nextStep, 'application/json');
+      }, 2000);
+    }
+
+
+   //Submit progressive profile
+
+    function submitProgressiveProfile() {
+      console.log('ProgressiveProfile called');
+      let frmObj = $("#frmProgressiveProfile").serializeArray();
+      //Convert to name value pairs and to an object
+      let loginFormObjHolder = {};    
+          //Set up an object so it can be submitted, parse nested nested items
+          $.each(frmObj, function(i, pair){
+         //Only add to the object if there is a value that has been entered       
+          if (pair.value != ""){
+             var cObj = loginFormObjHolder, pObj, cpName;
+               $.each(pair.name.split("."), function(i, pName){
+                 pObj = cObj;
+                 cpName = pName;
+                 cObj = cObj[pName] ? cObj[pName] : (cObj[pName] = {});
+             });
+        
+            pObj[cpName] = pair.value;
+
+          }
+        });
+
+      let payload = JSON.stringify(loginFormObjHolder);
+      let url = $('#progProfileIdentifierUrl').val();
+      let contenttype = 'application/vnd.pingidentity.user.update+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+
+    }
+
+    // validate password function
+
+    function validatePassword() {
+      console.log('validatePassword called');
+      let payload = JSON.stringify({ username: $('#username').val(), password: $('#password').val() });
+      let url = $('#validatePasswordUrl').val();
+      let contenttype = 'application/vnd.pingidentity.checkUsernamePassword+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    //PingFederate resume
+    function resume() {
+      console.log('resume URL called');
+      let url = $('#validatePasswordUrl').val();
+      let contenttype = 'application/vnd.pingidentity.checkUsernamePassword+json';
+      exJax('GET', url, nextStep, contenttype, payload);
+    }
+
+
+
+    // validate identifier function
+
+    function validateIdentifier() {
+      console.log('validateIdentifier called');
+      let payload = JSON.stringify({ username: $('#identifier').val() });
+      let url = $('#validateIdentifierUrl').val();
+      let contenttype = 'application/vnd.pingidentity.user.lookup+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    // validate one time passcode function
+
+    function validateOtp() {
+      console.log('validateOtp called');
+      let payload = JSON.stringify({ otp: $('#otp').val() });
+      let url = $('#validateOtpUrl').val();
+      let contenttype = 'application/vnd.pingidentity.checkOtp+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    function continueAuth() {
+      console.log('continue called');
+      let payload = "";
+      let url = $('#validateOtpUrl').val();
+      let contenttype = 'application/vnd.pingidentity.continueAuthentication+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    // show account registration form
+
+    function showRegistration() {
+      console.log('showRegistration called');
+      $('#loginDiv').hide();
+      $('#accountRegDiv').show();
+    }
+
+    // ajax call to register new account
+
+    function registerAccount() {
+      console.log('registerAccount called');
+      let payload = JSON.stringify({ username: $('#accountRegUsername').val(), email: $('#accountRegUsername').val(), password: $('#accountRegPassword').val(), name: { given: 'Michael' } });
+      let url = $('#accountRegUrl').val();
+      let contenttype = 'application/vnd.pingidentity.user.register+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    // show forgot password form
+
+    function showPasswordForgot() {
+      console.log('showPasswordForgot called');
+      $('#loginDiv').hide();
+      let url = $('#validatePasswordUrl').val();
+      let contenttype = 'application/vnd.pingidentity.initiateAccountRecovery+json';
+      payload= "";
+      exJax('POST', url, nextStep, contenttype, payload);
+
+    }
+
+    // forgot password function
+
+    function passwordForgot() {
+      console.log('passwordForgot called');
+      let payload = JSON.stringify({ username: $('#passwordForgotUsername').val() });
+      let url = $('#passwordForgotUrl').val();
+      let contenttype = 'application/vnd.pingidentity.checkAccountRecoveryUsername+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+
+    }
+
+    // password recover function validates passcode sent to email address
+
+    function passwordRecover() {
+      console.log('passwordRecover called');
+      //let payload = JSON.stringify({ recoveryCode: $('#passwordRecoverCode').val(), newPassword: $('#passwordRecoverNewPassword').val() })
+      let payload = JSON.stringify({ recoveryCode: $('#passwordRecoverCode').val() });
+      let url = $('#passwordRecoverUrl').val();
+      let contenttype = 'application/vnd.pingidentity.checkRecoveryCode+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+     
+    }
+
+    //Reset to the specified password afer reovey code is validated
+
+    function passwordResetToNew() {
+      console.log('Set new password called');
+      let payload = JSON.stringify({ newPassword: $('#passwordRecoverNewPassword').val() });
+      let url = $('#passwordRecoverUrl').val();
+      let contenttype = 'application/vnd.pingidentity.checkPasswordReset+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+       
+    }
+
+    // link account function
+
+    function accountLink() {
+      console.log('accountLink called');
+      let payload = JSON.stringify({ username: $('#accountLinkUsername').val(), email: $('#accountLinkUsername').val() });
+      let url = $('#accountLinkUrl').val();
+      let contenttype = 'application/vnd.pingidentity.user.register+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    // account verify function
+
+    function userVerify() {
+      console.log('userVerify called');
+      let payload = JSON.stringify({ verificationCode: $('#verificationCode').val() });
+      let url = $('#userVerifyUrl').val();
+      let contenttype = 'application/vnd.pingidentity.user.verify+json';
+      exJax('POST', url, nextStep, contenttype, payload);
+    }
+
+    // nextStep function looks at JSON status field to render appropriate form
+
+    function nextStep(data) {
+      status = data.status;
+      console.log('Parsing json to determine next step: ' + status);
+
+      $('#warningTitle').text('');
+      $('#warningMessage').text('');
+
+      // hide all of the different form divs
+
+      $('#warningDiv').hide();
+      $('#loginDiv').hide();
+      $('#identifierDiv').hide();
+      $('#otpDiv').hide();
+      $('#passwordDiv').hide();
+      $('#deviceSelectDiv').hide();
+      $('#accountLinkDiv').hide();
+      $('#userVerifyDiv').hide();
+      $('#accountRegDiv').hide();
+      $('#passwordForgotDiv').hide();
+      $('accountVerifyDiv').hide();
+
+      switch (status) {
+        
+        case 'USERNAME_PASSWORD_REQUIRED':
+          console.log('Rendering login form');
+          $('#loginDiv').show();
+          $('#validatePasswordUrl').val(data._links['checkUsernamePassword'].href);
+          break;
+        case 'PASSWORD_REQUIRED':
+          console.log('Rendering login form');
+          $('#loginDiv').show();
+          $('#validatePasswordUrl').val(data._links['checkUsernamePassword'].href);
+          break;
+        case 'SIGN_ON_REQUIRED':
+          console.log('Rendering identifier form');
+          $('#identifierDiv').show();
+          $('#validateIdentifierUrl').val(data._links['user.lookup'].href);
+          break;
+        case 'VERIFICATION_CODE_REQUIRED':
+          console.log('Rendering verification form');
+          $('#userVerifyDiv').show();
+          $('#userVerifyUrl').val(data._links['user.verify'].href);
+          break;
+        case 'OTP_REQUIRED':
+          console.log('Rendering otp form');
+          $('#otpDiv').show();
+          $('#validateOtpUrl').val(data._links['checkOtp'].href);
+          break;
+        case 'MUST_CHANGE_PASSWORD':
+          console.log('Rendering password form');
+          $('#passwordDiv').show();
+          $('#changePasswordUrl').val(data._links['password.reset'].href);
+          break;
+        case'ACCOUNT_RECOVERY_USERNAME_REQUIRED':
+          $('#passwordForgotDiv').show();
+          $('#passwordForgotUrl').val(data._links['checkAccountRecoveryUsername'].href);
+          break;
+        case 'RECOVERY_CODE_REQUIRED':
+          console.log('Rendering account recovery form');
+          $('#passwordRecoverDiv').show();
+          $('#passwordRecoverUrl').val(data._links['checkRecoveryCode'].href);
+          break;
+        case 'PASSWORD_RESET_REQUIRED':
+        console.log('Password reset step');
+          $('#passwordRecoverUrl').val(data._links['checkPasswordReset'].href);
+          passwordResetToNew();
+          break;
+
+        case 'SUCCESSFUL_PASSWORD_RESET':
+        console.log('Password reset step');
+          $('#passwordRecoverUrl').val(data._links['continueAuthentication'].href);
+          document.location = 'index.html';
+          break;
+
+
+ 	      case 'PROFILE_DATA_REQUIRED':
+          console.log('Rendering progressive profiling form');
+          let attributes = data._embedded.attributes;
+          var newField = ""
+          for (let i = 0; i < attributes.length; i++) { 
+            newField = newField + "<div class=\"form-row\"><div class=\"form-group col-md-6\">";
+            newField = newField + '<input type="text" class="form-control" id="accountRegPassword" name="' + attributes[i].name + '" placeholder="' + attributes[i].displayName + '"/></div></div>';
+          } 
+          $('#progressiveProfileDiv').show();
+          $('#progressiveProfileTextDiv').append(data._embedded.promptText);
+          $('#progressiveProfileTextDiv').show()
+          $('#progressiveProfileFieldsDiv').append(newField);
+          $('#progressiveProfileFieldsDiv').show();
+          $('#progProfileIdentifierUrl').val(data._links['user.update'].href);
+          break;
+        case 'DEVICE_SELECTION_REQUIRED':
+          console.log('Rendering device selection');
+          $('#deviceSelectUrl').val(data._links['device.select'].href);
+          let devices = data._embedded.devices;
+          for (let i = 0; i < devices.length; i++) {
+            var newButton;
+            switch (devices[i].type) {
+              case 'EMAIL':
+                newButton = '<button class="btn btn-secondary btn-lg mb-2" onclick="deviceSelect(this);" value="' +
+                  devices[i].id + '">EMAIL (' + devices[i].email + ')</button><br />';
+                break;
+              case 'SMS':
+                newButton = '<button class="btn btn-secondary btn-lg mb-2" onclick="deviceSelect(this);" value="' +
+                  devices[i].id + '">SMS (' + devices[i].phone + ')</button><br />';
+                break;
+              case 'MOBILE':
+                newButton = '<button class="btn btn-secondary btn-lg mb-2" onclick="deviceSelect(this);" value="' +
+                  devices[i].id + '">PUSH (' + devices[i].model.marketingName + ')</button><br />';
+                break;
+            }
+            $('#devicePayloadDiv').append(newButton);
+          }
+          $('#deviceSelectDiv').show();
+          break;
+        case 'ACCOUNT_LINKING_REQUIRED':
+          console.log('Rendering account linking form');
+          $('#accountLinkUrl').val(data._links['user.register'].href);
+          $('#accountLinkUsername').val(data.attributes.username);
+          $('#accountLinkDiv').show();
+          break;
+        case 'PUSH_CONFIRMATION_REQUIRED':
+          console.log('Waiting for user to approve push');
+          for (let i = 0; i < data._embedded.devices.length; i++) {
+            if (data._embedded.devices[i].id == data.selectedDevice.id) {
+              $('#devicePushMessage').text('Approval request sent to ' + data._embedded.devices[i].model.marketingName);
+            }
+          }
+        //  getPushStatus(data._links.flow.href);
+    	  getPushStatus(data._links.self.href);
+          
+	break;
+        case 'PUSH_CONFIRMATION_TIMED_OUT':
+          console.log('Push confirmation timed out');
+          $('#warningTitle').text('Authentication failure');
+          $('#warningMessage').text('Device approval timed out');
+          $('#warningDiv').show();
+          break;
+ 
+        case 'OTP_VERIFIED':
+          console.log('OTP verification');
+          //$('#otpDiv').show();
+           $('#validateOtpUrl').val(data._links['continueAuthentication'].href);
+           continueAuth();
+          break;
+
+
+       //This is complete authentication for PF. changed 'COMPLETE' to 'RESUME'
+        case 'RESUME':
+          console.log('Completed authentication successfully');
+          console.log('Redirecting user');
+          window.location.replace(data.resumeUrl);
+          break;
+        case 'FAILED':
+          console.log('Authentication flow failure');
+          $('#warningTitle').text('Unrecoverable error');
+          $('#warningMessage').text(data.error.message);
+          $('#warningDiv').show();
+          break;
+        default:
+          console.log('Unexpected outcome');
+          break;
+      }
+
+      // check for enabled external identity providers
+
+      /*
+      if (data._embedded.socialProviders) {
+
+        // yes we have external identity providers
+
+        console.log('Social providers present');
+
+        let socialProviders = data._embedded.socialProviders;
+
+        // iterate through collection of identity providers
+
+        for (let i = 0; i < socialProviders.length; i++) {
+
+          // create a button for each one
+
+          newButton = '<a href="' + socialProviders[i]._links.authenticate.href +
+            '" class="btn btn-secondary btn-lg mb-2 mr-1">Sign In With ' +
+            socialProviders[i].name + '</a>';
+          $('#signOnPayload').append(newButton);
+
+        }
+
+      }
+
+      */
+
+    }
+
+    // begin process
+
+    $(document).ready(function () {
+      console.log("Page ready function");
+
+      // determine if user is already signed in, and show appropriate login/logout buttons
+
+      renderButtonState();
+
+      // do I already have a session cookie?
+
+      if (Cookies.get('accessToken', { domain: cookieDomain }) && Cookies.get('uuid', { domain: cookieDomain })) {
+
+        // yes, user already has a session
+
+        console.log('Existing session found.  Redirecting to langingUrl');
+
+        // redirect to the landingUrl
+
+        window.location.replace(landingUrl);
+
+      } else {
+
+        // no, user does not already have a session
+
+        console.log('Session not found');
+
+        // parse the url fragment for any access token
+
+        console.log('Parsing URL Fragment for tokens');
+
+        let fragmentString = location.hash.substr(1);
+        let fragment = {};
+        let fragmentItemStrings = fragmentString.split('&');
+
+        for (var i in fragmentItemStrings) {
+          var fragmentItem = fragmentItemStrings[i].split('=');
+          if (fragmentItem.length !== 2) {
+            continue;
+          }
+          fragment[fragmentItem[0]] = fragmentItem[1];
+        }
+
+        let accessToken = fragment['access_token'];
+        let idToken = fragment['id_token'];
+
+        // is there something in the URL fragment?
+
+        if (accessToken && idToken) {
+
+          // yes, we got an access token from the url fragment
+
+          console.log('Access token received from URL fragment');
+
+          // parse id token for subject and other details
+
+          idPayload = parseJwt(idToken);
+
+          // does requested nonce match returned nonce?
+
+          let returnedNonce = idPayload.nonce;
+
+          // let requestedNonce = window.localStorage.getItem('nonce');
+
+          let requestedNonce = Cookies.get('nonce', { domain: cookieDomain });
+
+          if (returnedNonce == requestedNonce) {
+
+            // yes, nonce matches
+
+            Cookies.set('uuid', idPayload.sub, { domain: cookieDomain });
+            Cookies.set('accessToken', accessToken, { domain: cookieDomain });
+            Cookies.set('idToken', idToken, { domain: cookieDomain });
+
+            window.location.replace(landingUrl);
+
+          } else {
+
+            // no, nonce does not match
+
+            console.log('Nonce validation failed');
+
+            console.log('Requested nonce: ' + requestedNonce);
+            console.log('Returned nonce: ' + returnedNonce);
+
+            $('#warningTitle').text('Nonce mismatch');
+            $('#warningMessage').text('Unexpected nonce returned in id token');
+            $('#warningDiv').show();
+
+          }
+
+        } else {
+
+          // missing accessToken or idToken for this individual
+
+          console.log('No token found in URL Fragment');
+
+          // was the user just sent here from p14c?
+
+          if (flowId) {
+
+            // yes, url has a flowId - so they just arrived from p14c
+
+            console.log('flowId found in url');
+            console.log('Performing p14c ajax query to determine next step');
+            let flowUrl = authUrl + '/' + environmentId + '/flows/' + flowId;
+            exJax('GET', flowUrl, nextStep, 'application/json');
+
+          } else {
+
+            // no, url does not have a flowId.  and we don't have a session.  send them authorizationUrl
+
+            console.log('No flowId found in url');
+            console.log('Redirecting to p14c to bootstrap session');
+
+            doLogin();
+
+          }
+
+        }
+
+      }
+
+    });
+
+  </script>
+
+</body>
+
+</html>
