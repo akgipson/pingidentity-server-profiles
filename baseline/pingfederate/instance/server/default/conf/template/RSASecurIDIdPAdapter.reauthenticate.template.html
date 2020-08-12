@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+#**
+The server renders this HTML page in an end-user's browser when
+the end-user should be challenged out-of-band.
+
+Change text or formatting as needed. Velocity variables (identified 
+by the $ character) are generated at runtime by the server. Modifying 
+Velocity statements is not recommended as it may interfere with 
+expected server behavior.
+
+The following variables are available on this page, but not used by default:
+
+$connectionName - Returns the name of the connection if available. If not, it returns the entity Id
+$entityId - Returns the entity Id of the Identity Provider
+$clientId - Returns the OAuth client Id if the adapter is used in an OAuth flow
+$spAdapterId - Returns the Service Provider adapter Id when using PingFederate 9.x or higher
+
+*#
+
+<!-- template name: RSASecurIDIdPAdapter.reauthenticate.template.html -->
+
+#set( $messageKeyPrefix = "RSASecurIDIdPAdapter.reauthenticate.template" )
+
+<html lang="$locale.getLanguage()" dir="ltr">
+<head>
+    <title>SecurID - Re-authentication Form</title>
+    <base href="$PingFedBaseURL"/>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" media="all" type="text/css" href="assets/css/main.css" />
+
+</head>
+<body onload="setFocus()">
+    <div class="ping-container">
+        <div class="ping-header">
+            Two-Factor Authentication
+        </div><!-- .ping-header -->
+        <div class="ping-body-container">
+        	<form method="post" action="$actionUrl" autocomplete="off">
+        		<input type="hidden" name="$csrfKey" value="$csrfToken"/>
+				$openComment
+				<div id="authFailed" class="authFailed">Access Denied</div>
+				$closeComment
+				<div>
+				<p>Please re-authenticate to complete your pin reset. <br/><br/>Wait until the tokencode (the number on your RSA SecurID token) changes, then enter that new tokencode. <br/><b>Note:</b> It may take a minute or more for the tokencode to change.</p>
+				</div>
+				<br /><div align="left">Passcode:</div>
+				<input type="password" name="$pfPass" id="password" class="password" /><br />
+				<br />
+                             <input type="submit" name="$pfOk" value="  OK  " class="btn"/>&nbsp;&nbsp;
+                             <input type="submit" name="$pfCancel" value=" Cancel " class="btn"/>
+			</form>
+        </div><!-- .ping-body-container -->
+        <div class="ping-footer-container">
+            <div class="ping-footer">
+                <div class="ping-credits">
+                    <a href="http://www.pingidentity.com">PingIdentity</a>
+                </div>
+            </div> <!-- .ping-footer -->
+        </div> <!-- .ping-footer-container -->
+    </div><!-- .ping-container -->
+    <script type="text/javascript">
+        function setFocus() {
+            var platform = navigator.platform;
+            if (platform != null && platform.indexOf('iPhone') == -1) {
+                document.getElementById('password').focus();
+            }
+        }
+    </script>
+</body>
+</html>
